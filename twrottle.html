@@ -1,0 +1,43 @@
+<head>
+  <title>twrottle</title>
+  <link href="http://d2v52k3cl9vedd.cloudfront.net/basscss/5.2.0/basscss.min.css" rel="stylesheet">
+</head>
+
+<body>
+  {{> loginButtons}}
+  
+  <div class="container">
+    {{#if currentUser}}
+    {{> ruleForm}}
+    {{> ruleList}}
+    {{else}}
+    <h1>Welcome to Twrottle!</h1>    
+    <h3>Twrottle is your personal twitter assistant. You can set IFTT style rules to act it for you</h3>
+    <p>Please login with twitter to be able to set your ruleset</p>
+    {{/if}}
+  </div>
+</body>
+
+<template name="ruleForm">
+  <h2>Create a New Rule</h2>
+  {{#each ruleset}}
+  <form><input type="hidden" name="text" value="{{text}}"/>{{{parseRule text inputs}}} <button type="submit">Add</button></form>  
+  {{/each}}
+</template>
+
+<template name="ruleList">
+  {{#if rulesReady}}
+  <h2>Existing Rules</h2>  
+  <ul>
+  {{#each rules}}
+  {{> ruleItem}}
+  {{/each}}
+  </ul>
+  {{else}}
+  <p>Loading rules...</p>
+  {{/if}}
+</template>  
+
+<template name="ruleItem">
+  <li class="mb1">{{parseRule text}} <button class="bg-red white remove">&times;</button></li>  
+</template>  

@@ -1,0 +1,5 @@
+.login-buttons-dropdown-align-{
+  padding: 1rem;
+}
+input{border:none;border-bottom:1px solid black;}
+input[readonly]{border:none;display:inline}
