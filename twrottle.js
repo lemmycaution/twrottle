@@ -112,10 +112,19 @@ if (Meteor.isServer) {
 
   Fiber = Npm.require('fibers');
 
+  T = new TwitMaker({
+    consumer_key:         Meteor.settings.CONSUMER_KEY,
+    consumer_secret:      Meteor.settings.CONSUMER_SECRET,
+    access_token:         Meteor.settings.BOT_ACCESS_TOKEN,
+    access_token_secret:  Meteor.settings.BOT_SECRET
+  });
+
+  stream = null;
+
   Meteor.publish("rules", function () {
     return Rules.find({ userId: this.userId });
   });
-  
+
   Meteor.methods({
     addRule: function(data) {
       var userId = Meteor.userId();
@@ -124,28 +133,26 @@ if (Meteor.isServer) {
       if(data.term)
         data.term = data.term.replace(/\s,\s|\s,|,\s/,",");
       data.userId = userId;
-      Rules.insert(data);
+      console.log("inserted",Rules.insert(data));
+      restartStream();
     },
     removeRule: function(id) {
       var userId = Meteor.userId();
       if (! userId)
         throw new Meteor.Error("not-authorized");
       Rules.remove({_id: id, userId: userId});
+      restartStream();      
     }
   })
 
-  Meteor.startup(function () {
-
-    T = new TwitMaker({
-      consumer_key:         Meteor.settings.CONSUMER_KEY,
-      consumer_secret:      Meteor.settings.CONSUMER_SECRET,
-      access_token:         Meteor.settings.BOT_ACCESS_TOKEN,
-      access_token_secret:  Meteor.settings.BOT_SECRET
-    });
-
+  restartStream = function() {
+    if(stream)
+      stream.stop();
+    
     var
     termRules = Rules.find({term: {$ne: null}}),
-    track = termRules.map(function(r){return r.term}).join(","),
+    track = termRules.map(function(r){return r.term}).join(",");
+    
     stream = T.stream('statuses/filter', { track: track });
 
     stream.on('tweet', function (tweet) {
@@ -195,7 +202,8 @@ if (Meteor.isServer) {
      }).run();
 
     });
+  }
 
-  });
+  Meteor.startup(restartStream);
 
 }
