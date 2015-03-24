@@ -160,7 +160,7 @@ if (Meteor.isServer) {
      Fiber(function() { 
        var regexp = tweet.text.replace(" ", "|");
        
-       console.log(regexp);
+       console.log("----> regexp", regexp);
        
        Rules
        .find({term: {$regex: regexp}})
@@ -173,27 +173,27 @@ if (Meteor.isServer) {
            access_token_secret: user.services.twitter.accessTokenSecret
          })
          
-         console.log(rule.action)
+         console.log("----> rule.action", rule.action)
          
          switch(rule.action) {
          case "follow":
            T.post('friendships/create', { id: tweet.user.id_str }, function (err, data, response) {
-             console.log("err",err);
+             console.log("----> err", err);
            })
            break;
          case "favorite":
            T.post('favorites/create', { id: tweet.id_str }, function (err, data, response) {
-             console.log("err",err);
+             console.log("----> err", err);
            })
            break;
          case "retweet":
            T.post('statuses/retweet/:id', { id: tweet.id_str }, function (err, data, response) {
-             console.log("err",err);
+             console.log("----> err", err);
            })
            break;
          case "reply":
            T.post('statuses/update', { status: "@" + tweet.user.screen_name + " " + rule.tweet }, function(err, data, response) {
-             console.log("err",err);
+             console.log("----> err", err);
            })
            break;
          }
