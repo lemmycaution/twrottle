@@ -163,7 +163,7 @@ if (Meteor.isServer) {
        console.log("----> regexp", regexp);
        
        Rules
-       .find({term: {$regex: regexp}})
+       .find({term: {$regex: regexp, $options: "i"}})
        .forEach(function (rule) {
          
          var user = Meteor.users.findOne(rule.userId);
