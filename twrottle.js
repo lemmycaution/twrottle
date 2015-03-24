@@ -158,7 +158,7 @@ if (Meteor.isServer) {
     stream.on('tweet', function (tweet) {
 
      Fiber(function() { 
-       var regexp = tweet.text.replace(" ", "|");
+       var regexp = tweet.text.replace(new RegExp("\s","g"), "|");
        
        console.log("----> regexp", regexp);
        
